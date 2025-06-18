@@ -1,6 +1,11 @@
 # Import required libraries from FastAPI and others
 # Import required libraries from FastAPI and others
 import random
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from fastapi.responses import StreamingResponse
 from fastapi import FastAPI, Request, Form, HTTPException, status, Depends
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -14,6 +19,9 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 from docx import Document
 from docx.shared import Inches
+from datetime import datetime
+from reportlab.lib.units import inch
+
 
 import csv
 from bs4 import BeautifulSoup
@@ -44,7 +52,7 @@ import ssl
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://edubridge_db_58vd_user:XIScMCDoEJHxq5JJmvA0iAAiw91NHy3C@dpg-d18jk8mmcj7s73a26510-a:5432/edubridge_db_58vd?sslmode=require"
+    "postgresql://edubridge_db_58vd_user:XIScMCDoEJHxq5JJmvA0iAAiw91NHy3C@dpg-d18jk8mmcj7s73a26510-a.oregon-postgres.render.com:5432/edubridge_db_58vd?sslmode=require"
 )
 
 
@@ -377,10 +385,10 @@ async def modules_page(request: Request):
         ]
     elif "johannesburg" in university:
         modules = [
-            {"name": "Artificial Intelligence", "status": "register"},
-            {"name": "Internet Programming", "status": "offered"},
-            {"name": "Mobile Programming", "status": "offered"},
-            {"name": "Database Programming", "status": "offered"},
+            {"name": "Artificial Intelligence", "status": "offered"},
+            {"name": "Internet Programming", "status": "register"},
+            {"name": "Mobile Programming", "status": "register"},
+            {"name": "Database Programming", "status": "register"},
             {"name": "Web Server Management", "status": "offered"},
             {"name": "Distributed System", "status": "offered"},
             {"name": "Software Project", "status": "register"},
@@ -972,6 +980,99 @@ async def view_results(request: Request):
         "request": request,
         "results": results
     })
+    
+    
+    
+    
+    
+    
+@app.get("/academic-results/download/pdf")
+async def download_academic_results_pdf(request: Request):
+    student_id = request.session.get("student_id")
+    if not student_id:
+        return RedirectResponse(url="/tut-login", status_code=303)
+
+    try:
+        student_id_int = int(student_id)
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=400, detail="Invalid student ID format")
+
+    async with db_pool.acquire() as conn:
+        student = await conn.fetchrow("""
+            SELECT s.name AS student_name, u.name AS home_university
+            FROM student s
+            JOIN university u ON s.home_university = u.university_id
+            WHERE s.student_id = $1
+        """, student_id_int)
+
+        if not student:
+            raise HTTPException(status_code=404, detail="Student not found")
+
+        registrations = await conn.fetch("""
+            SELECT m.module_id, m.name AS module_name,
+                   u.name AS registered_university, u.university_id
+            FROM registration r
+            JOIN module m ON r.module_id = m.module_id
+            JOIN university u ON r.university_id = u.university_id
+            WHERE r.student_id = $1
+        """, student_id_int)
+
+        results = []
+        for reg in registrations:
+            result = await conn.fetchrow("""
+                SELECT mark, semester, status
+                FROM academic_results
+                WHERE student_id = $1 AND module_id = $2 AND university_id = $3
+            """, student_id_int, reg["module_id"], reg["university_id"])
+
+            if not result:
+                continue
+
+            results.append([
+                f"MOD{reg['module_id']}",
+                reg["module_name"],
+                student["home_university"],
+                reg["registered_university"],
+                f"{result['mark']}%",
+                f"Semester {result['semester']}",
+                result["status"]
+            ])
+
+    # PDF generation
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    elements.append(Paragraph("EduBridge Academic Results", styles["Title"]))
+    elements.append(Spacer(1, 12))
+    elements.append(Paragraph(f"Student Name: {student['student_name']}", styles["Normal"]))
+    elements.append(Paragraph(f"Home University: {student['home_university']}", styles["Normal"]))
+    elements.append(Spacer(1, 12))
+
+    table_data = [["Module Code", "Module Name", "Home University", "Module University", "Mark", "Semester", "Status"]] + results
+    table = Table(table_data, repeatRows=1)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.HexColor("#4F81BD")),
+        ('TEXTCOLOR', (0,0), (-1,0), colors.whitesmoke),
+        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+        ('FONTSIZE', (0,0), (-1,0), 10),
+        ('BOTTOMPADDING', (0,0), (-1,0), 12),
+        ('BACKGROUND', (0,1), (-1,-1), colors.beige),
+        ('GRID', (0,0), (-1,-1), 0.5, colors.black),
+    ]))
+
+    elements.append(table)
+    doc.build(elements)
+    buffer.seek(0)
+
+    return StreamingResponse(buffer, media_type="application/pdf", headers={
+        "Content-Disposition": "attachment; filename=academic_results.pdf"
+    })
+    
+    
+    
 
 
 # ------------------- MODULE INFO AND WEB CRAWLING -------------------

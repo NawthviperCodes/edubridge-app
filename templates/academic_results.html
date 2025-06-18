@@ -3,6 +3,8 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Academic Results</h2>
+
+
     <table class="table table-bordered mt-4">
         <thead class="table-dark">
             <tr>
@@ -34,9 +36,21 @@
             </tr>
             {% endfor %}
         </tbody>
-        <div>
-            <a href="/tut-dashboard" class="btn btn-success mt-3">Return to Home</a>
-        </div>
+        
+      
+
+        
+
     </table>
+
+      <div>
+            <a href="/tut-dashboard" class="btn btn-success mt-3">Return to Home</a>
+            <a href="/tut-dashboard" class="btn btn-success mt-3">Return to Dashboard</a>
+             <a href="/academic-results/download/pdf" class="btn btn-success mt-3">
+                📄 Download as PDF</a>
+        </div>
+
+   
+
 </div>
 {% endblock %}

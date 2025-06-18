@@ -6,11 +6,7 @@ Fourth Year Modules | EduBridge
 
 {% block content %}
 <div class="container modules-section">
-    <div class="mb-4">  <!-- Added margin-bottom container -->
-        <a href="/academic-results" class="btn btn-academic-results">
-            <i class="fas fa-chart-bar me-2"></i> View Academic Results
-        </a>
-    </div>
+    
     <h1 class="text-center">Fourth Year Modules</h1>
     <p class="text-center">{{ message }}</p>
 
@@ -19,12 +15,19 @@ Fourth Year Modules | EduBridge
             <div class="module">
                 <span class="module-name">{{ module.name }}</span>
                 {% if module.status == 'register' %}
-                    <a href="/module-info?module={{ module.name | urlencode }}" class="btn btn-success">Register</a>
-                {% else %}
-                    <button class="btn btn-danger" disabled>OFFERED</button>
-                {% endif %}
+    <a href="/module-info?module={{ module.name | urlencode }}" class="btn btn-success">Register</a>
+{% elif module.status == 'registered' %}
+    <button class="btn btn-success mt-3" disabled>REGISTERED</button>
+{% else %}
+    <button class="btn btn-danger" disabled>OFFERED</button>
+{% endif %}
             </div>
         {% endfor %}
     </div>
+    <div class="text-center mt-4">
+            <a href="/" class="btn btn-success mt-3">Return to Home</a>
+            <a href="/tut-dashboard" class="btn btn-success mt-3">Return to Dashboard</a>
+            
+        </div>
 </div>
 {% endblock %}
