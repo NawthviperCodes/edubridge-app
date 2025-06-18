@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Module Info | EduBridge
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Universities Offering {{ module }}</h1>
+
+    {% if results %}
+        <div class="row">
+            {% for uni in results %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">{{ uni.university }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{ uni.description }}...</p>
+                        <a href="{{ uni.redirect_url }}" class="btn btn-primary">Register at {{ uni.university }}</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center">
+            No results found for {{ module }} across partnered universities.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

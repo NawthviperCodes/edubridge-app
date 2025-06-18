@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Academic Results{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Academic Results</h2>
+    <table class="table table-bordered mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th>Module Code</th>
+                <th>Module Name</th>
+                <th>Your University</th>
+                <th>Module University</th>
+                <th>Mark</th>
+                <th>Semester</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for res in results %}
+            <tr>
+                <td>{{ res.module_code }}</td>
+                <td>{{ res.module_name }}</td>
+                <td>{{ res.your_university }}</td>
+                <td>{{ res.module_university }}</td>
+                <td>{{ res.mark }}</td>
+                <td>{{ res.semester }}</td>
+                <td>
+                    {% if res.status == 'Passed' %}
+                        <span style="color: green;">{{ res.status }}</span>
+                    {% else %}
+                        <span style="color: red;">{{ res.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <div>
+            <a href="/tut-dashboard" class="btn btn-success mt-3">Return to Home</a>
+        </div>
+    </table>
+</div>
+{% endblock %}

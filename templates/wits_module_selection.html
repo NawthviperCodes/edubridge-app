@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Fourth Year Modules | EduBridge
+{% endblock %}
+
+{% block content %}
+<div class="modules-section">
+    <h1>Fourth Year Modules</h1>
+    <p>Register for modules not offered at your university ({{ university_code }}).</p>
+
+    <div class="modules-card">
+        {% for module in modules %}
+        <div class="module">
+            {{ module.name }}
+            {% if university_code == 'WITS' %}
+                {% if module.offered_by_wits %}
+                    <button class="btn btn-danger" disabled>OFFERED</button>
+                {% else %}
+                    <a href="/module-info?module={{ module.name }}" class="btn btn-success">REGISTER</a>
+                {% endif %}
+            {% elif university_code == 'TUT' %}
+                {% if module.offered_by_tut %}
+                    <button class="btn btn-danger" disabled>OFFERED</button>
+                {% else %}
+                    <a href="/module-info?module={{ module.name }}" class="btn btn-success">REGISTER</a>
+                {% endif %}
+            {% elif university_code == 'UJ' %}
+                {% if module.offered_by_uj %}
+                    <button class="btn btn-danger" disabled>OFFERED</button>
+                {% else %}
+                    <a href="/module-info?module={{ module.name }}" class="btn btn-success">REGISTER</a>
+                {% endif %}
+            {% else %}
+                <button class="btn btn-danger" disabled>UNKNOWN</button>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Students | EduBridge{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Manage Students</h1>
+
+    {% if students %}
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Home University</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student.student_id }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.university }}</td>
+                        <td>
+                            <a href="/admin/students/{{ student.student_id }}/edit" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="/admin/students/{{ student.student_id }}/delete" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <!-- Added student count here -->
+        <div class="text-end mt-3">
+            <strong>Total Students Found: {{ students|length }}</strong>
+        </div>
+    {% else %}
+        <p class="text-center">No students found.</p>
+    {% endif %}
+</div>
+{% endblock %}

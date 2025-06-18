@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Admin Dashboard | EduBridge
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Admin Dashboard</h1>
+    <a href="/admin/registrations" class="btn btn-primary">View All Registrations</a>
+    <a href="/admin/students" class="btn btn-primary">Manage Students</a>
+    <a href="/admin/logout" class="btn btn-danger">Logout</a>
+</div>
+{% endblock %}

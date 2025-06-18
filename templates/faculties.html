@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}
+University Faculties | EduBridge
+{% endblock %}
+
+{% block content %}
+<div class="container faculty-section mt-5">
+    <!-- Stylish "View Academic Results" button with bottom margin -->
+
+
+    <!-- University Faculties section with top margin -->
+    <div class="mt-4">  <!-- Added margin-top container -->
+        <h1 class="text-center mb-3">University Faculties</h1>
+        <p class="text-center">Select the faculty you want to register students for:</p>
+    </div>
+
+    <div class="faculty-card mt-4">
+        <!-- Working clickable form -->
+        <form action="/select-faculty" method="post" class="mb-3">
+            <input type="hidden" name="facultyName" value="Faculty of Information Technology">
+            <button type="submit" class="btn btn-primary w-100">
+                Faculty of Information and Communication Technology
+            </button>
+        </form>
+
+        <!-- Disabled placeholders -->
+        <button class="btn btn-secondary w-100 mb-2" disabled>
+            Faculty of Science (Unavailable)
+        </button>
+        <button class="btn btn-secondary w-100 mb-2" disabled>
+            Faculty of Engineering (Unavailable)
+        </button>
+        <button class="btn btn-secondary w-100 mb-2" disabled>
+            Faculty of Business and Economics (Unavailable)
+        </button>
+        <button class="btn btn-secondary w-100 mb-2" disabled>
+            Faculty of Humanities (Unavailable)
+        </button>
+    </div>
+</div>
+
+<style>
+    /* Custom button style */
+    .btn-academic-results {
+        background-color: #4a6baf;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-academic-results:hover {
+        background-color: #3a5a9f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-academic-results:active {
+        transform: translateY(0);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+University Selection | EduBridge
+{% endblock %}
+
+{% block content %}
+<div class="container university-section">
+    <h1 class="text-center">Select Your University</h1>
+    <p class="text-center">Home University</p>
+
+    <div class="university-card">
+        <form id="universityForm" action="/university-selection" method="post">
+            <div class="mb-3">
+                <label for="universitySelect" class="form-label">Choose University</label>
+                <select class="form-control" id="universitySelect" name="universitySelect" required>
+                    <option value="Tshwane University of Technology (TUT)">Tshwane University of Technology (TUT) </option>
+                    <option value="University of Johannesburg">University of Johannesburg(UJ) </option>
+                    <option value="University of Pretoria (UP)">University of Pretoria (UP) </option>
+                    <option value="University of the Witwatersrand (WITS)">University of the Witwatersrand (WITS) </option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-custom">Proceed</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

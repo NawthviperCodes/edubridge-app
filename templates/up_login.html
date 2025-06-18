@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+UP Student Login | EduBridge
+{% endblock %}
+
+{% block content %}
+<div class="container login-section">
+    <div class="text-center mb-4">
+        <img src="/static/images/up_logo.png"
+             alt="UP Logo" 
+             class="login-logo"
+             style="height: 100px; width: auto;">
+    </div>
+    <h1 class="text-center">UP Student Login</h1>
+    <p class="text-center">Login to register modules</p>
+
+    <div class="login-card">
+        <form id="loginForm" action="/up-login" method="post">
+            {% if error %}
+                <div class="alert alert-danger text-center" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            <div class="mb-3">
+                <label for="studentID" class="form-label">UP Student ID</label>
+                <input type="number" class="form-control" id="studentID" name="studentID" placeholder="Enter your UP student ID" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </div>
+        </form>
+
+        <p class="text-center mt-3">
+            Don’t have an account?
+            <a href="/register-up" class="text-info">Register here</a>
+        </p>
+        
+    </div>
+</div>
+{% endblock %}

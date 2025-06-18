@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Proof of Registration | EduBridge
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card p-4">
+        <div class="text-center">
+            {% if registered_university == "UP" %}
+            <h2>University of Pretoria</h2>
+            <p>Excellence in Education</p>
+            {% elif registered_university == "UJ" %}
+            <h2>University of Johannesburg</h2>
+            <p>Inspiring Tomorrow</p>
+            {% elif registered_university == "WITS" %}
+            <h2>University of the Witwatersrand</h2>
+            <p>Knowledge and Insight</p>
+            {% elif registered_university == "TUT" %}
+            <h2>Tshwane University of Technology</h2>
+            <p>We empower people</p>
+            {% elif registered_university == "UNIVEN" %}
+            <h2>University of Venda</h2>
+            <p>Creating Future Leaders</p>
+            {% elif registered_university == "UCT" %}
+            <h2>University of Cape Town</h2>
+            <p>Knowledge for a Better World</p>
+            {% elif registered_university == "UL" %}
+            <h2>University of Limpopo</h2>
+            <p>Empowering Communities</p>
+            {% elif registered_university == "NWU" %}
+            <h2>North-West University</h2>
+            <p>It All Starts Here</p>
+            {% elif registered_university == "RHODES" %}
+            <h2>Rhodes University</h2>
+            <p>Where Leaders Learn</p>
+            {% elif registered_university == "NMU" %}
+            <h2>Nelson Mandela University</h2>
+            <p>Change the World</p>
+            {% else %}
+            <h2>{{ registered_university }}</h2>
+            <p>Empowering Future Generations</p>
+            {% endif %}
+            <hr>
+        </div>
+        <h3 class="text-center">TO WHOM IT MAY CONCERN</h3>
+        <p class="text-center">
+            It is hereby confirmed that {{ name }}, Student Number {{ student_id }}, is registered from
+            03-Jan-2025 to 14-Dec-2025 at {{ registered_university }} for the under mentioned programme subjects.
+        </p>
+        <p class="text-center">
+            <strong>Campus and Registration Type: 
+            {% if registered_university == "UP" %}
+            HATFIELD - FULL TIME
+            {% elif registered_university == "UJ" %}
+            AUCKLAND PARK - FULL TIME
+            {% elif registered_university == "WITS" %}
+            BRAAMFONTEIN - FULL TIME
+            {% elif registered_university == "TUT" %}
+            B7 SOSHANGUVE (SOUTH) - FULL TIME
+            {% elif registered_university == "UNIVEN" %}
+            THOHOYANDOU - FULL TIME
+            {% elif registered_university == "UCT" %}
+            RONDEBOSCH - FULL TIME
+            {% elif registered_university == "UL" %}
+            TURFLOOP - FULL TIME
+            {% elif registered_university == "NWU" %}
+            POTCHEFSTROOM - FULL TIME
+            {% elif registered_university == "RHODES" %}
+            GRAHAMSTOWN - FULL TIME
+            {% elif registered_university == "NMU" %}
+            SOUTH CAMPUS - FULL TIME
+            {% else %}
+            MAIN CAMPUS - FULL TIME
+            {% endif %}
+            </strong>
+        </p>
+        <p class="text-center">
+            <strong>Qualification: 
+            {% if registered_university == "UP" %}
+            BSCSF0 BSc (Computer Science) (Extended)
+            {% elif registered_university == "UJ" %}
+            BCSDF0 BCom (Informatics) (Extended)
+            {% elif registered_university == "WITS" %}
+            BSINF0 BSc (Information Systems) (Extended)
+            {% elif registered_university == "TUT" %}
+            DPRSF0 Dip (Computer Science) (Extended)
+            {% elif registered_university == "UNIVEN" %}
+            BSCIT0 BSc (Information Technology) (Extended)
+            {% elif registered_university == "UCT" %}
+            BSCIS0 BSc (Computer Science) (Extended)
+            {% elif registered_university == "UL" %}
+            BSCDT0 BSc (Data Science) (Extended)
+            {% elif registered_university == "NWU" %}
+            BSCCT0 BSc (Computer Technology) (Extended)
+            {% elif registered_university == "RHODES" %}
+            BSCIF0 BSc (Informatics) (Extended)
+            {% elif registered_university == "NMU" %}
+            BSCST0 BSc (Software Technology) (Extended)
+            {% else %}
+            BSCGEN0 BSc (General) (Extended)
+            {% endif %}
+            </strong>
+        </p>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Description</th>
+                    <th>Qual.</th>
+                    <th>Offering Type</th>
+                    <th>Cancel</th>
+                    <th>Exempt</th>
+                    <th>Exam Year</th>
+                    <th>Exam Month</th>
+                    <th>Class Group</th>
+                    <th>Practical Group</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ module }}</td>
+                    <td>{{ module }}</td>
+                    <td>
+                        {% if registered_university == "UP" %}
+                        BSCSF0
+                        {% elif registered_university == "UJ" %}
+                        BCSDF0
+                        {% elif registered_university == "WITS" %}
+                        BSINF0
+                        {% elif registered_university == "TUT" %}
+                        DPRSF0
+                        {% elif registered_university == "UNIVEN" %}
+                        BSCIT0
+                        {% elif registered_university == "UCT" %}
+                        BSCIS0
+                        {% elif registered_university == "UL" %}
+                        BSCDT0
+                        {% elif registered_university == "NWU" %}
+                        BSCCT0
+                        {% elif registered_university == "RHODES" %}
+                        BSCIF0
+                        {% elif registered_university == "NMU" %}
+                        BSCST0
+                        {% else %}
+                        BSCGEN0
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if registered_university == "UP" %}
+                        B8
+                        {% elif registered_university == "UJ" %}
+                        B9
+                        {% elif registered_university == "WITS" %}
+                        B6
+                        {% elif registered_university == "TUT" %}
+                        B7
+                        {% elif registered_university == "UNIVEN" %}
+                        B5
+                        {% elif registered_university == "UCT" %}
+                        B4
+                        {% elif registered_university == "UL" %}
+                        B3
+                        {% elif registered_university == "NWU" %}
+                        B2
+                        {% elif registered_university == "RHODES" %}
+                        B1
+                        {% elif registered_university == "NMU" %}
+                        B0
+                        {% else %}
+                        BX
+                        {% endif %}
+                    </td>
+                    <td>N</td>
+                    <td>N</td>
+                    <td>2025</td>
+                    <td>5</td>
+                    <td>KB</td>
+                    <td>KB</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="text-center mt-3">REGISTRAR</p>
+        <p class="text-center">03-May-2025</p>
+        <p class="text-center">62917</p>
+        <div class="text-center mt-4">
+            <a href="/" class="btn btn-success mt-3">Return to Home</a>
+            <a href="/proof-pdf?student_id={{ student_id }}&name={{ name }}&email={{ email }}&home_university={{ home_university }}&module={{ module }}&registered_university={{ registered_university }}" class="btn btn-primary mt-3">Download PDF</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

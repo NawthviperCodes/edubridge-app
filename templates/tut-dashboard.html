@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}
+TUT Student Dashboard | EduBridge
+{% endblock %}
+
+{% block content %}
+<div class="container dashboard-section" style="text-align:center; padding: 2rem;">
+    <h1>Welcome to the EduBridge Dashboard</h1>
+    <p>You are logged in. Choose an action below.</p>
+
+    <div style="margin-top: 2rem;">
+        <a href="/modules" class="btn-dashboard">Register for a Module</a>
+        <a href="/academic-results" class="btn-dashboard">View Academic Results</a>
+    </div>
+</div>
+
+<style>
+.btn-dashboard {
+    display: inline-block;
+    padding: 1rem 2rem;
+    margin: 1rem;
+    background-color: #1e90ff;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+.btn-dashboard:hover {
+    background-color: #0f78d4;
+}
+</style>
+{% endblock %}

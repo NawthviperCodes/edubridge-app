@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-danger">Confirm Deletion</h2>
+
+    {% if registration %}
+        <p>Are you sure you want to delete this registration?</p>
+        <h4 class="mb-4">{{ registration.student_name }} - {{ registration.module }}</h4>
+    {% elif student %}
+        <p>Are you sure you want to delete this student?</p>
+        <h4 class="mb-4">{{ student.name }} (ID: {{ student.student_id }})</h4>
+    {% else %}
+        <p>Error: No valid data provided for deletion.</p>
+    {% endif %}
+
+    <form method="post">
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a href="/admin" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

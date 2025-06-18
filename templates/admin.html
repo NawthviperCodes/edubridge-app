@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Admin Portal | EduBridge
+{% endblock %}
+
+{% block content %}
+<div class="container admin-portal-section mt-5">
+    <h1>Admin Portal</h1>
+
+    {% if request.session.get('admin_logged_in') %}
+        <div class="mt-4">
+            <p>Welcome to the admin dashboard.</p>
+            <a href="/admin/students" class="btn btn-success">Manage Students</a>
+            <a href="/registrations" class="btn btn-info ms-2">View All Registrations</a>
+            <a href="/admin/logout" class="btn btn-danger ms-2">Logout</a>
+        </div>
+    {% else %}
+        <p>You must <a href="/admin/login">login</a> to access the admin dashboard.</p>
+    {% endif %}
+</div>
+{% endblock %}

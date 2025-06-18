@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Faculty of Information Technology - Courses | EduBridge
+{% endblock %}
+
+{% block content %}
+<!-- Courses Section -->
+<div class="container courses-section">
+    <h1 class="text-center">Faculty of Information Technology - Courses</h1>
+    <p class="text-center">Below is a list of courses available under the Faculty of Information Technology.</p>
+
+    <div class="course-card">
+    <button class="btn btn-primary faculty-btn" onclick="goToCourses()">Computer Science</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('Information Technology')">Information Technology</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('Software Development')">Software Development</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('Network Systems')">Network Systems</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('Cybersecurity')">Cybersecurity</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('Computer Systems')">Computer Systems</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('Informatics')">Informatics</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('Data Science')">Data Science</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('Artificial Intelligence')">Artificial Intelligence</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('Information Engineering')">Information Engineering</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('Computational and Applied Mathematics')">Computational and Applied Mathematics</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('ICT Policy & Regulation')">ICT Policy & Regulation</button>
+    <button class="btn btn-primary course-btn" onclick="registerCourse('Multi Media Technology')">Multi Media Technology</button>
+</div>
+</div>
+
+<script>
+  function goToCourses() {
+      // Redirect to modules (or adjust this based on your route structure)
+      window.location.href = "/modules";
+  }
+
+  function registerCourse(courseName) {
+      alert("You selected: " + courseName);
+      // Optionally redirect:
+      // window.location.href = "/register?course=" + encodeURIComponent(courseName);
+  }
+</script>
+{% endblock %}
