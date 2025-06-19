@@ -692,6 +692,16 @@ async def update_student(
     password: str = Form(...),
     gender: str = Form(...)
 ):
+    # Validate name to not include numbers
+    if any(char.isdigit() for char in name):
+        async with db_pool.acquire() as conn:
+            student = await conn.fetchrow("SELECT * FROM student WHERE student_id = $1", student_id)
+        return templates.TemplateResponse("edit_student.html", {
+            "request": request,
+            "student": student,
+            "error": "Name cannot contain numbers."
+        })
+
     # Validate gender
     if gender not in ["Male", "Female"]:
         async with db_pool.acquire() as conn:
@@ -707,7 +717,9 @@ async def update_student(
             "UPDATE student SET name = $1, email = $2, password = $3, gender = $4 WHERE student_id = $5",
             name, email, password, gender, student_id
         )
+
     return RedirectResponse(url="/admin/students", status_code=status.HTTP_303_SEE_OTHER)
+
 
 @app.get("/admin/students/{student_id}/delete", response_class=HTMLResponse)
 async def confirm_delete_student(request: Request, student_id: int):
@@ -835,6 +847,32 @@ async def update_registration(
     notes: str = Form("")
 ):
     gender = gender.title()  # Normalize gender
+
+    # ✅ Reject names with numbers
+    if any(char.isdigit() for char in full_name):
+        async with db_pool.acquire() as conn:
+            registration = await conn.fetchrow("""
+                SELECT r.registration_id,
+                       s.name AS student_name,
+                       s.student_id AS student_number,
+                       s.email,
+                       u.name AS university,
+                       m.name AS module,
+                       r.notes,
+                       s.gender
+                FROM registration r
+                JOIN student s ON r.student_id = s.student_id
+                JOIN university u ON s.home_university = u.university_id
+                JOIN module m ON r.module_id = m.module_id
+                WHERE r.registration_id = $1
+            """, reg_id)
+        return templates.TemplateResponse("edit_registration.html", {
+            "request": request,
+            "registration": registration,
+            "error": "Full name cannot contain numbers."
+        })
+
+    # ✅ Validate gender
     if gender not in ["Male", "Female"]:
         async with db_pool.acquire() as conn:
             registration = await conn.fetchrow("""
@@ -858,6 +896,7 @@ async def update_registration(
             "error": "Gender must be either Male or Female."
         })
 
+    # ✅ Proceed with updates if all validation passes
     async with db_pool.acquire() as conn:
         uni = await conn.fetchrow("SELECT university_id FROM university WHERE name = $1", university)
         if not uni:
@@ -879,6 +918,7 @@ async def update_registration(
         )
 
     return RedirectResponse(url="/admin/registrations", status_code=status.HTTP_303_SEE_OTHER)
+
 
 @app.get("/delete-registration/{reg_id}", response_class=HTMLResponse)
 async def confirm_delete_registration(request: Request, reg_id: int):
