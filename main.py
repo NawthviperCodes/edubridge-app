@@ -52,7 +52,7 @@ import ssl
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://edubridge_db_58vd_user:XIScMCDoEJHxq5JJmvA0iAAiw91NHy3C@dpg-d18jk8mmcj7s73a26510-a.oregon-postgres.render.com:5432/edubridge_db_58vd?sslmode=require"
+    "postgresql://edubridge_7de1_user:WPBQUpMOPw0avbncD7gIYqFoVgbzujQw@dpg-d3dpvjer433s73eh28m0-a.oregon-postgres.render.com:5432/edubridge_7de1?sslmode=require"
 )
 
 
