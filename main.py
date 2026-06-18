@@ -34,26 +34,40 @@ from reportlab.lib import colors
 
 import asyncpg
 import os
+from pathlib import Path
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from dotenv import load_dotenv
 
 load_dotenv()
 
+BASE_DIR = Path(__file__).resolve().parent
+
 app = FastAPI()
 app.add_middleware(
     SessionMiddleware,
-    secret_key="tut123",
+    secret_key=os.getenv("SESSION_SECRET", "change-this-in-production"),
     max_age=3600  # 1 hour
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
-import ssl
+def normalize_database_url(url):
+    if not url:
+        return url
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://edubridge_7de1_user:WPBQUpMOPw0avbncD7gIYqFoVgbzujQw@dpg-d3dpvjer433s73eh28m0-a.oregon-postgres.render.com:5432/edubridge_7de1?sslmode=require"
-)
+    # asyncpg does not use libpq's channel_binding query option, which is
+    # included in some providers' generated connection strings.
+    parts = urlsplit(url)
+    query = [
+        (key, value)
+        for key, value in parse_qsl(parts.query, keep_blank_values=True)
+        if key != "channel_binding"
+    ]
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+
+
+DATABASE_URL = normalize_database_url(os.getenv("DATABASE_URL"))
 
 
 
@@ -62,12 +76,48 @@ db_pool = None
 @app.on_event("startup")
 async def startup():
     global db_pool
-    db_pool = await asyncpg.create_pool(DATABASE_URL, timeout=30)
+    if not DATABASE_URL:
+        raise RuntimeError(
+            "DATABASE_URL is not set. Add a PostgreSQL connection string to the "
+            "service environment variables."
+        )
+
+    db_pool = await asyncpg.create_pool(
+        DATABASE_URL,
+        min_size=1,
+        max_size=int(os.getenv("DB_POOL_MAX_SIZE", "5")),
+        command_timeout=60,
+        timeout=30,
+    )
+
+    if os.getenv("AUTO_INIT_DB", "true").lower() in {"1", "true", "yes"}:
+        schema = (BASE_DIR / "schema.sql").read_text(encoding="utf-8")
+        async with db_pool.acquire() as conn:
+            await conn.execute(schema)
+
+            admin_email = os.getenv("ADMIN_EMAIL")
+            admin_password = os.getenv("ADMIN_PASSWORD")
+            if admin_email and admin_password:
+                await conn.execute(
+                    """
+                    INSERT INTO admin (email, password)
+                    VALUES ($1, $2)
+                    ON CONFLICT (email) DO NOTHING
+                    """,
+                    admin_email,
+                    admin_password,
+                )
 
 @app.on_event("shutdown")
 async def shutdown():
     if db_pool:
         await db_pool.close()
+
+@app.get("/health")
+async def health():
+    async with db_pool.acquire() as conn:
+        await conn.fetchval("SELECT 1")
+    return {"status": "ok"}
 
 # ------------------ Page Routes ------------------
 @app.get("/", response_class=HTMLResponse)
@@ -470,7 +520,10 @@ async def select_faculty(request: Request, facultyName: str = Form(...)):
     async with db_pool.acquire() as conn:
         record = await conn.fetchrow("SELECT faculty_id FROM faculty WHERE name = $1", facultyName)
         if not record:
-            await conn.execute("INSERT INTO faculty (name, university_id) VALUES ($1, 1)", facultyName)
+            await conn.execute("""
+                INSERT INTO faculty (name, university_id)
+                SELECT $1, university_id FROM university WHERE name = 'TUT'
+            """, facultyName)
     return RedirectResponse(url="/courses", status_code=status.HTTP_303_SEE_OTHER)
 
 @app.get("/courses", response_class=HTMLResponse)
@@ -905,7 +958,11 @@ async def update_registration(
 
         mod = await conn.fetchrow("SELECT module_id FROM module WHERE name = $1", module)
         if not mod:
-            mod = await conn.fetchrow("INSERT INTO module (name, faculty_id) VALUES ($1, 1) RETURNING module_id", module)
+            mod = await conn.fetchrow("""
+                INSERT INTO module (name, faculty_id)
+                SELECT $1, faculty_id FROM faculty ORDER BY faculty_id LIMIT 1
+                RETURNING module_id
+            """, module)
         module_id = mod["module_id"]
 
         await conn.execute(
@@ -1293,7 +1350,12 @@ async def submit_registration(
         mod = await conn.fetchrow("SELECT module_id FROM module WHERE name = $1", selected_module)
         if not mod:
             mod = await conn.fetchrow(
-                "INSERT INTO module (name, faculty_id) VALUES ($1, 1) RETURNING module_id", selected_module
+                """
+                INSERT INTO module (name, faculty_id)
+                SELECT $1, faculty_id FROM faculty ORDER BY faculty_id LIMIT 1
+                RETURNING module_id
+                """,
+                selected_module
             )
         module_id = mod["module_id"]
 

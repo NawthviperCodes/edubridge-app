@@ -52,6 +52,29 @@ EduBridge is not just a project — it’s a **scalable solution** that can chan
 * **PDF Engine:** ReportLab
 * **Hosting:** Render.com
 
+## Deployment
+
+EduBridge can use any hosted PostgreSQL database that supplies a standard
+connection string. Neon is a convenient option for a small deployment.
+
+1. Create a PostgreSQL project and copy its connection string.
+2. In Render, open the EduBridge web service and add these environment
+   variables:
+
+   - `DATABASE_URL`: the PostgreSQL connection string (including
+     `sslmode=require`)
+   - `SESSION_SECRET`: a long random value
+   - `ADMIN_EMAIL`: the initial administrator email
+   - `ADMIN_PASSWORD`: the initial administrator password
+
+3. Deploy the latest commit. On first startup, `schema.sql` creates the tables
+   and seed records automatically.
+4. Open `/health`. A successful database connection returns
+   `{"status":"ok"}`.
+
+Copy `.env.example` to `.env` to run locally. Never commit `.env` or database
+credentials.
+
 ---
 
 ## 🌟 Impact on Students
