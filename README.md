@@ -1,6 +1,8 @@
-# 🎓 EduBridge Registration Platform
+# EduBridge Registration Platform
 
-👉 [Live Demo](https://edubridge-app.onrender.com)
+## [View the Live Demo](https://edubridge-app.onrender.com/)
+
+**Live application:** https://edubridge-app.onrender.com/
 
 ## ❌ The Problem
 
